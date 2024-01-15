@@ -1,9 +1,6 @@
 package com.maolana.shittu.bankingappdemo.service.impl;
 
-import com.maolana.shittu.bankingappdemo.dto.AccountInfo;
-import com.maolana.shittu.bankingappdemo.dto.BankResponse;
-import com.maolana.shittu.bankingappdemo.dto.EmailDetails;
-import com.maolana.shittu.bankingappdemo.dto.UserRequest;
+import com.maolana.shittu.bankingappdemo.dto.*;
 import com.maolana.shittu.bankingappdemo.entity.User;
 import com.maolana.shittu.bankingappdemo.repository.UserRepository;
 import com.maolana.shittu.bankingappdemo.utils.AccountUtils;
@@ -65,6 +62,67 @@ public class UserServiceImpl implements UserService{
                         .accountName(saveUser.getFirstName()+ " " + saveUser.getLastName()+ " " + saveUser.getOtherName())
                         .build())
                 .build();
+    }
+
+    @Override
+    public BankResponse balanceEnquiry(EnquiryRequest enquiryRequest) {
+         Boolean isAccountExist= userRepository.existsByAccountNumber(enquiryRequest.getAccountNumber());
+         if(!isAccountExist){
+             return BankResponse.builder()
+                     .responseCode(AccountUtils.ACCOUNT_NOT_EXIT_CODE)
+                     .responseMessage(AccountUtils.ACCOUNT_NOT_EXIT_MESSAGE)
+                     .accountInfo(null)
+                     .build();
+         }
+         User foundUser = userRepository.findByAccountNumber(enquiryRequest.getAccountNumber());
+         return BankResponse.builder()
+                 .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
+                 .responseMessage(AccountUtils.ACCOUNT_FOUND_MESSAGE)
+                 .accountInfo(AccountInfo.builder()
+                         .accountBalance(foundUser.getAccountBalance())
+                         .accountNumber(foundUser.getAccountNumber())
+                         .accountName(foundUser.getFirstName() + " " + foundUser.getLastName() + " " + foundUser.getOtherName())
+                         .build())
+                 .build();
+    }
+
+    @Override
+    public String nameEnquiry(EnquiryRequest enquiryRequest) {
+        Boolean isAccountExist = userRepository.existsByAccountNumber(enquiryRequest.getAccountNumber());
+        if(!isAccountExist){
+            return AccountUtils.ACCOUNT_NOT_EXIT_MESSAGE;
+
+        }
+        User founduser = userRepository.findByAccountNumber(enquiryRequest.getAccountNumber());
+        return founduser.getFirstName() + " " + founduser.getLastName() + " " + founduser.getOtherName();
+    }
+
+    @Override
+    public BankResponse creditAccount(CreditDebitRequest creditDebitRequest) {
+        Boolean isAccountExist = userRepository.existsByAccountNumber(creditDebitRequest.getAccountNumber());
+        if(!isAccountExist){
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_NOT_EXIT_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_NOT_EXIT_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+
+        }
+        User userToCredit = userRepository.findByAccountNumber(creditDebitRequest.getAccountNumber());
+        userToCredit.setAccountBalance(userToCredit.getAccountBalance().add(creditDebitRequest.getAmount()));
+        userRepository.save(userToCredit);
+        return BankResponse.builder()
+                .responseCode(AccountUtils.ACCOUNT_CREDITED_SUCCESS_CODE)
+                .responseMessage(AccountUtils.ACCOUNT_CREDITED_SUCCESS_MESSAGE)
+                .accountInfo(AccountInfo.builder()
+                        .accountName(userToCredit.getFirstName() + " " + userToCredit.getLastName() + " " + userToCredit.getOtherName())
+                        .accountBalance(userToCredit.getAccountBalance())
+                        .accountNumber(creditDebitRequest.getAccountNumber())
+                        .build())
+
+
+                .build();
+
     }
 
 }
