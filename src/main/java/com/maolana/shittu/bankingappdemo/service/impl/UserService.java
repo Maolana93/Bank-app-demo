@@ -1,9 +1,6 @@
 package com.maolana.shittu.bankingappdemo.service.impl;
 
-import com.maolana.shittu.bankingappdemo.dto.BankResponse;
-import com.maolana.shittu.bankingappdemo.dto.CreditDebitRequest;
-import com.maolana.shittu.bankingappdemo.dto.EnquiryRequest;
-import com.maolana.shittu.bankingappdemo.dto.UserRequest;
+import com.maolana.shittu.bankingappdemo.dto.*;
 
 public interface UserService {
     BankResponse createAccount(UserRequest userRequest);
@@ -11,5 +8,7 @@ public interface UserService {
     String nameEnquiry(EnquiryRequest enquiryRequest);
     BankResponse creditAccount (CreditDebitRequest creditDebitRequest);
     BankResponse debitAccount (CreditDebitRequest creditDebitRequest);
+    BankResponse transfer (TransferRequest transferRequest);
+
 
 }

@@ -1,9 +1,6 @@
 package com.maolana.shittu.bankingappdemo.controller;
 
-import com.maolana.shittu.bankingappdemo.dto.BankResponse;
-import com.maolana.shittu.bankingappdemo.dto.CreditDebitRequest;
-import com.maolana.shittu.bankingappdemo.dto.EnquiryRequest;
-import com.maolana.shittu.bankingappdemo.dto.UserRequest;
+import com.maolana.shittu.bankingappdemo.dto.*;
 import com.maolana.shittu.bankingappdemo.service.impl.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +33,11 @@ public class UserController {
         @PostMapping("/debit")
     public BankResponse debitAccount (@RequestBody CreditDebitRequest creditDebitRequest) {
         return userService.debitAccount(creditDebitRequest);
+        }
+        
+        @PostMapping("/transfer")
+    public BankResponse transfer (@RequestBody TransferRequest transferRequest){
+        return userService.transfer(transferRequest);
+
         }
 }
